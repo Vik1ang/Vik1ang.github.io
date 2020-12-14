@@ -22,28 +22,36 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Vik1ang&#39;s Blog">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="动态规划解题套路框架 首先，动态规划问题的一般形式就是求最值 求解动态规划的核心问题是穷举 动态规划问题一定会具备最优子结构 列出正确的状态转移方程才能正确地穷举  框架：明确 base case -&gt; 明确 状态 -&gt; 明确 选择 -&gt; 定义 dp数组&#x2F;函数的定义 1234567# 初始化 base casedp[0][0][...] &#x3D; base# 进行状态转移for 状态1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="My Algorithm">
+<meta property="og:url" content="http://example.com/2020/12/14/My-Algorithm/index.html">
 <meta property="og:site_name" content="Vik1ang&#39;s Blog">
+<meta property="og:description" content="动态规划解题套路框架 首先，动态规划问题的一般形式就是求最值 求解动态规划的核心问题是穷举 动态规划问题一定会具备最优子结构 列出正确的状态转移方程才能正确地穷举  框架：明确 base case -&gt; 明确 状态 -&gt; 明确 选择 -&gt; 定义 dp数组&#x2F;函数的定义 1234567# 初始化 base casedp[0][0][...] &#x3D; base# 进行状态转移for 状态1">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2020/12/14/My-Algorithm/fib01.png">
+<meta property="og:image" content="http://example.com/2020/12/14/My-Algorithm/fib02.png">
+<meta property="og:image" content="http://example.com/2020/12/14/My-Algorithm/fib03.png">
+<meta property="article:published_time" content="2020-12-14T02:40:14.000Z">
+<meta property="article:modified_time" content="2020-12-14T06:37:02.199Z">
 <meta property="article:author" content="Vik1ang">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/12/14/My-Algorithm/fib01.png">
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2020/12/14/My-Algorithm/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>Vik1ang's Blog</title>
+  <title>My Algorithm | Vik1ang's Blog</title>
   
 
 
@@ -181,9 +189,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -199,10 +208,9 @@
       <meta itemprop="name" content="Vik1ang's Blog">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/14/My-Algorithm/" class="post-title-link" itemprop="url">My Algorithm</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          My Algorithm
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -240,7 +248,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h2><h3 id="解题套路框架"><a href="#解题套路框架" class="headerlink" title="解题套路框架"></a>解题套路框架</h3><ul>
+        <h2 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h2><h3 id="解题套路框架"><a href="#解题套路框架" class="headerlink" title="解题套路框架"></a>解题套路框架</h3><ul>
 <li>首先，动态规划问题的一般形式就是<strong>求最值</strong></li>
 <li>求解动态规划的核心问题是<strong>穷举</strong></li>
 <li>动态规划问题一定会具备<strong>最优子结构</strong></li>
@@ -274,304 +282,50 @@
 <h6 id="自顶向下"><a href="#自顶向下" class="headerlink" title="自顶向下"></a>自顶向下</h6><p>比如我们画的递归树，是从上向下延伸，都是从一个规模较大的圆问题比如说<code>f(20)</code>，向下逐渐分解规模， 直到<code>f(1)</code>和<code>f(2)</code>这两个base case，然后逐层返回答案，这就是<strong>自顶向下</strong></p>
 <h6 id="自顶向上"><a href="#自顶向上" class="headerlink" title="自顶向上"></a>自顶向上</h6><p>和<strong>自顶向下</strong>反过来，我们直接从最底下开始，最简单问题规模最小的<code>f(1)</code>和<code>f(2)</code>开始往上推，直到我们想到的答案为止<code>f(20)</code>,这就是动态规划的思路，这也是为什么动态规划一般都脱离了递归，而是由循环迭代完成计算</p>
 
-      
     </div>
 
     
     
     
+        <div class="reward-container">
+  <div>Donate comment here.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Vik1ang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Vik1ang 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/09/protobuf/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Vik1ang">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Vik1ang's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/09/protobuf/" class="post-title-link" itemprop="url">protobuf</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-12-09 14:04:46 / 修改时间：14:59:55" itemprop="dateCreated datePublished" datetime="2020-12-09T14:04:46+08:00">2020-12-09</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.9k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Protocol-Buffer"><a href="#Protocol-Buffer" class="headerlink" title="Protocol Buffer"></a>Protocol Buffer</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><ul>
-<li>是Google公司内部的<strong>混合语言数据标准</strong>， 是一种轻便搞笑的结构化数据存储格式，可以用于结构化数据<strong>序列化</strong>。</li>
-<li>通过讲结构化的数据进行序列化，从而实现数据存储/RPC数据交换的功能<ul>
-<li>序列化：将数据结构或对象转换成二进制串的过程</li>
-<li>反序列化： 将序列化的二进制串转换成数据结构或者对象的过程</li>
-</ul>
-</li>
-</ul>
-<h3 id="序列化协议需要考虑的因素"><a href="#序列化协议需要考虑的因素" class="headerlink" title="序列化协议需要考虑的因素"></a>序列化协议需要考虑的因素</h3><ul>
-<li>序列化之的流大小 （占用网络带宽)</li>
-<li>序列化和反序列化的性能 (CPU资源占用)</li>
-<li>是否支持跨语言</li>
-</ul>
-<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
-<li>性能<ul>
-<li>序列化后，数据大小可缩小约3倍</li>
-<li>序列化速度快，比XML和Json都快</li>
-<li>传输速度快，因为体积小</li>
-</ul>
-</li>
-<li>使用<ul>
-<li>维护成本低：仅需维护一套对象协议文件(.proto)</li>
-<li>兼容性：扩展性好，不必破坏旧数据的格式，就可以直接对数据结构进行更新</li>
-<li>加密好：http传输内容抓包只能抓到字节</li>
-</ul>
-</li>
-<li>跨平台、跨语言</li>
-</ul>
-<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
-<li>不适用于对基于文本的标记文档如(HTML)建模，因为文本不适合描述数据结构</li>
-<li>可读性，以二进制数据流方式进行储存(不可读)，需要通过.proto文件才能了解数据结构</li>
-</ul>
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><h3 id="定义协议格式"><a href="#定义协议格式" class="headerlink" title="定义协议格式"></a>定义协议格式</h3><ol>
-<li>proto文件中的定义很简单:为要序列化的每个数据结构添加一条消息，然后为消息中的每个字段指定一个名称和类型</li>
-</ol>
-<p><strong><code>.proto</code>文件以程序包声明开头，这有助于防止不同项目之间的命名冲突。</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">syntax &#x3D; &quot;proto3&quot;;</span><br><span class="line">package tutorial;</span><br><span class="line"></span><br><span class="line">import &quot;google&#x2F;protobuf&#x2F;timestamp.proto&quot;;</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>接下来，您将拥有消息定义。消息只是包含一组类型字段的汇总。许多标准的简单数据类型可用作字段类型，包括bool，int32，float，double和string。您还可以通过使用其他消息类型作为字段类型来为消息添加更多的结构。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">message Person &#123;</span><br><span class="line">  string name &#x3D; 1;</span><br><span class="line">  int32 id &#x3D; 2;  &#x2F;&#x2F; Unique ID number for this person.</span><br><span class="line">  string email &#x3D; 3;</span><br><span class="line"></span><br><span class="line">  enum PhoneType &#123;</span><br><span class="line">    MOBILE &#x3D; 0;</span><br><span class="line">    HOME &#x3D; 1;</span><br><span class="line">    WORK &#x3D; 2;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  message PhoneNumber &#123;</span><br><span class="line">    string number &#x3D; 1;</span><br><span class="line">    PhoneType type &#x3D; 2;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  repeated PhoneNumber phones &#x3D; 4;</span><br><span class="line"></span><br><span class="line">  google.protobuf.Timestamp last_updated &#x3D; 5;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Our address book file is just one of these.</span><br><span class="line">message AddressBook &#123;</span><br><span class="line">  repeated Person people &#x3D; 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">在上面的示例中，Person消息包含PhoneNumber消息，而AddressBook消息包含Person消息。您甚至可以定义嵌套在其他消息中的消息类型-如您所见，PhoneNumber类型是在Person内部定义的。如果希望某个字段具有一个预定义的值列表之一，则也可以定义枚举类型-在这里您要指定电话号码可以是MOBILE，HOME或WORK之一。</span><br><span class="line"></span><br><span class="line">每个元素上的“ &#x3D; 1”，“ &#x3D; 2”标记标识该字段在二进制编码中使用的唯一“标记”。标签编号1至15与较高的编号相比，编码所需的字节减少了一个字节，因此，为了进行优化，您可以决定将这些标签用于常用或重复的元素，而将标签16和更高的标签用于较少使用的可选元素。重复字段中的每个元素都需要重新编码标签号，因此repeated字段是此优化的最佳候选者。</span><br><span class="line"></span><br><span class="line">如果未设置字段值，则使用默认值：数字类型为零，字符串为空字符串，布尔值为false。对于嵌入式消息，默认值始终是消息的“默认实例”或“原型”，没有设置任何字段。调用访问器以获取尚未显式设置的字段的值将始终返回该字段的默认值。</span><br><span class="line"></span><br><span class="line">如果是一个repeated字段，则该字段可以重复任意次（包括零次）。重复值的顺序将保留在协议缓冲区中。将重复字段视为动态大小的数组。</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">go install google.golang.org/protobuf/cmd/protoc-gen-go</span><br><span class="line">protoc -I=<span class="variable">$SRC_DIR</span> --go_out=<span class="variable">$DST_DIR</span> <span class="variable">$SRC_DIR</span>/addressbook.proto</span><br><span class="line">protoc -I=. --go_out=. ./addressbook.proto</span><br></pre></td></tr></table></figure>
+        
 
 
-      
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/09/protobuf/" rel="prev" title="protobuf">
+      <i class="fa fa-chevron-left"></i> protobuf
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/09/rpc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Vik1ang">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Vik1ang's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/09/rpc/" class="post-title-link" itemprop="url">rpc</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-12-09 13:48:22 / 修改时间：14:02:26" itemprop="dateCreated datePublished" datetime="2020-12-09T13:48:22+08:00">2020-12-09</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>65</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="RPC"><a href="#RPC" class="headerlink" title="RPC"></a>RPC</h1><p>Remote Procedure Call</p>
-<p>远程过程调用， 这只是一个统称，只是一个<em>概念</em></p>
-<p>从单机到分布式-&gt;分布式通信 </p>
-<h2 id="RPC01"><a href="#RPC01" class="headerlink" title="RPC01"></a>RPC01</h2>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/08/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Vik1ang">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Vik1ang's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/08/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-08 18:06:25" itemprop="dateCreated datePublished" datetime="2020-12-08T18:06:25+08:00">2020-12-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-09 14:03:49" itemprop="dateModified" datetime="2020-12-09T14:03:49+08:00">2020-12-09</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>367</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
   
 
 
@@ -624,6 +378,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">1.</span> <span class="nav-text">动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E5%A5%97%E8%B7%AF%E6%A1%86%E6%9E%B6"><span class="nav-number">1.1.</span> <span class="nav-text">解题套路框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0%E5%88%97"><span class="nav-number">1.2.</span> <span class="nav-text">斐波那契数列</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E6%9A%B4%E5%8A%9B%E9%80%92%E5%BD%92"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 暴力递归</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">计算复杂度</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%B8%A6%E5%A4%87%E5%BF%98%E5%BD%95%E7%9A%84%E9%80%92%E5%BD%92%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 带备忘录的递归算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">时间复杂度</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B"><span class="nav-number">1.2.2.2.1.</span> <span class="nav-text">自顶向下</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8A"><span class="nav-number">1.2.2.2.2.</span> <span class="nav-text">自顶向上</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
