@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://Vik1ang.github.io</id>
+    <title>Gridea</title>
+    <updated>2022-11-19T03:08:38.926Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://Vik1ang.github.io"/>
+    <link rel="self" href="https://Vik1ang.github.io/atom.xml"/>
+    <subtitle>Vik1ang&apos;s blog</subtitle>
+    <logo>https://Vik1ang.github.io/images/avatar.png</logo>
+    <icon>https://Vik1ang.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2022, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[服务端向客户端推送信息的另一个方案: Server Side Events(SSE)]]></title>
+        <id>https://Vik1ang.github.io/post/fu-wu-duan-xiang-ke-hu-duan-tui-song-xin-xi-de-ling-yi-ge-fang-an-server-side-eventssse/</id>
+        <link href="https://Vik1ang.github.io/post/fu-wu-duan-xiang-ke-hu-duan-tui-song-xin-xi-de-ling-yi-ge-fang-an-server-side-eventssse/">
+        </link>
+        <updated>2022-11-19T00:50:21.000Z</updated>
+        <content type="html"><![CDATA[<p>因为工作上的原因, 这篇文章会用<code>C#</code> 来实现</p>
+<h1 id="场景">场景</h1>
+<p>在开发Web项目的时候, 如果<strong>服务器需要主动并不断地推送消息给客户端</strong>, 常用的技术方案:</p>
+<ol>
+<li>客户端发送请求, 阻塞等待通知并返回结果, 通知客户端再次发送请求, 或者客户端不断的向服务端进行请求, 这样可能在很长时间内不断建立网络连接然后再断开, 非常的消耗资源</li>
+<li><code>WebSocket</code>是不错的解决方案, 只需要一次网络连接就能让客户端和服务端都主动发消息收消息, 但是再我的使用场景里, 客户端只需要接收服务器的推送, 故我没有选择这个方案</li>
+<li><code>Server Side Event</code> 就是这篇文章要讲的主要内容, 可以在服务端和客户端建立一次连接后, 由服务端不断的向客户端推送, 并且是建立在HTTP协议上, 绝大部分浏览器原生支持</li>
+<li><code>SignalR</code> 这个方案也是可以的应该也很成熟, 但是我没怎么了解过</li>
+</ol>
+<h1 id="sse">SSE</h1>
+<h2 id="sse-的本质">SSE 的本质</h2>
+<p>从<code>HTTP</code>这个协议本身来讲是无法做到服务器主动推送信息, 但是可以使用 <strong>流(<code>streaming</code>)</strong> 来变通</p>
+<p>通过流, 发送的就不是一次数据包, 而是一个数据流, 会连续不断的发送, 而且客户端也不会关闭连接 <strong>(其实客户端是可以主动进行关闭的)</strong> , 比如在线视频的原理就是如此, 换句话说就是通过流的方式实现了一次用时很长的下载或者请求.</p>
+<p><code>SSE</code> 就是利用了这个流的机制, 向浏览器主动推送消息</p>
+<h2 id="sse-包">SSE 包</h2>
+<p><code>SSE</code> 的数据包必须是<code>UTF-8</code>编码的文本, <code>Header</code> 大概长这样</p>
+<pre><code>Content-Type: text/event-stream
+Cache-Control: no-cache, no-transform
+Connection: keep-alive
+</code></pre>
+<p><strong><code>Content-Type</code> 必须指定 <code>Mime</code> 类型为 <code>event-stream</code></strong></p>
+<p>每一次发送的消息, 可以由好几个<code>message</code> 组成, 每个<code>message</code> 之间用  <code>\n\n</code> 分隔</p>
+<p>每个 <code>message</code> 内部可以有好几行, 每一行都是这种格式</p>
+<pre><code>[Field]: value\n
+</code></pre>
+<p>这个 <code>Field</code> 可以取这4个值:</p>
+<ul>
+<li><code>data</code></li>
+<li><code>event</code></li>
+<li><code>id</code></li>
+<li><code>retry</code></li>
+</ul>
+<p>或者可以使用 <code>:</code> 开头, 代表注释, 通常服务器需要周期性的向浏览器发送一个注释, 保持连接不断</p>
+<pre><code>: a comment
+</code></pre>
+<h3 id="data-字段"><code>data</code> 字段</h3>
+<blockquote>
+<p>如果数据很长可以分成多行发, 最后一行用 <code>\n\n</code> 来结尾, 其余行使用 <code>\n</code></p>
+<pre><code>data: line1\n
+data: line end\n\n
+</code></pre>
+</blockquote>
+<h3 id="id-字段"><code>id</code> 字段</h3>
+<p>标识数据编号, 可以不传的</p>
+<pre><code>id: 1\n
+data: abc\n\n
+</code></pre>
+<h3 id="event-字段"><code>event</code> 字段</h3>
+<p>默认是 <code>message</code> 事件, 浏览器可以使用 <code>addEventListener</code> 监听需要的事件</p>
+<pre><code>event: A event\n
+data: A event data\n\n
+
+data: empty event \n\n
+
+event: B event\n
+data: B event data\n\n
+</code></pre>
+<h3 id="retry-字段"><code>retry</code> 字段</h3>
+<p>服务端可以使用 <code>retry</code> 字段, 指定浏览器重新发起连接的时间间隔</p>
+<pre><code>retry: 10000\n
+</code></pre>
+<p>两种情况会导致浏览器重新发起连接:</p>
+<ol>
+<li>时间间隔到期</li>
+<li>由于网络原因, 导致连接断开</li>
+</ol>
+<h1 id="服务端">服务端</h1>
+<p>因为工作上用的是他, 所以在这里也使用 <code>Asp.NetCore</code> 当作例子了</p>
+<h3 id="准备">准备</h3>
+<p>先写一个<code>HttpContext</code> 初始化 <code>SSE</code> 响应的扩展方法</p>
+<pre><code class="language-java">public static class ServerSideEventHttpContextExtensions {
+        public static async Task ServerSideEventInitAsync(this HttpContext ctx) {
+                ctx.Response.Headers.Add(&quot;Cache-Control&quot;, &quot;no-cache, no-transform&quot;);
+                ctx.Response.Headers.Add(&quot;Content-Type&quot;, &quot;text/event-stream; charset=utf-8&quot;);
+                await ctx.Response.Body.FlushAsync();   
+        }
+}
+</code></pre>
+<p>把<code>SSE</code>消息封装成一个对象</p>
+<pre><code class="language-java">public class ServerSideEvent
+{
+    #region Fields
+
+    public string EventName { get; set; }
+    public object Data { get; set; }
+    public string Id { get; set; }
+    public int? Retry { get; set; }
+
+    #endregion
+
+    #region Ctor
+
+    public ServerSideEvent(string eventName, object data)
+    {
+        EventName = eventName;
+        Data = data;
+    }
+
+    #endregion
+}
+</code></pre>
+<p>再写一个发送消息的方法</p>
+<pre><code class="language-java">public static class ServerSideEventHttpContextExtensions {
+        ...
+
+        public static async Task ServerSideEventSendAsync(this HttpContext ctx, ServerSideEvent sse)
+        {
+                if (string.IsNullOrWhiteSpace(sse.Id))
+                {
+                    await ctx.Response.WriteAsync(&quot;id: &quot; + sse.Id + &quot;\n&quot;);
+                }
+
+                if (sse.Retry is not null)
+                {
+                    await ctx.Response.WriteAsync(&quot;retry: &quot; + sse.Retry + &quot;\n&quot;);
+                }
+
+                await ctx.Response.WriteAsync(&quot;event: &quot; + sse.EventName + &quot;\n&quot;);
+
+                var lines = sse.Data switch
+                {
+                    null =&gt; new[] { string.Empty },
+                    string s =&gt; s.Split('\n').ToArray(),
+                    _ =&gt; new[] { JsonSerializer.Serialize(sse.Data) }
+                };
+
+                foreach (var line in lines)
+                {
+                    await ctx.Response.WriteAsync(&quot;data: &quot; + line + &quot;\n&quot;);
+                }
+
+                await ctx.Response.WriteAsync(&quot;\n&quot;);
+                await ctx.Response.Body.FlushAsync();
+        }
+}
+</code></pre>
+<h3 id="发送">发送</h3>
+<pre><code class="language-java">[HttpGet(&quot;/sse&quot;)]
+public async Task SSE()
+{
+        await HttpContext.ServerSideEventInitAsync();
+        Random random = new Random();
+
+        for (int i = 0; i &lt; 100; i++)
+        {
+                string eventName = string.Empty;
+                eventName = i % 2 == 0 ? &quot;event1&quot; : &quot;event2&quot;;
+                var sse = new ServerSideEvent(eventName, new { Foo = $&quot;{random.Next()}&quot;, Bar = $&quot;{random.Next()}&quot; })
+                {
+                        Id = $&quot;{random.Next()}&quot;
+                 };
+                 await HttpContext.ServerSideEventSendAsync(sse);
+        }
+}              
+</code></pre>
+<h1 id="客户端">客户端</h1>
+<p>分别监听 <code>event1</code> 和 <code>event2</code> 事件</p>
+<pre><code class="language-js">const eventSource = new EventSource(&quot;/sse&quot;, { withCredentials: true } );
+eventSource.addEventListener(&quot;event1&quot;, (event) =&gt; {
+    console.log(JSON.parse(event.data));
+});
+eventSource.addEventListener(&quot;event2&quot;, (event) =&gt; {
+    console.log(JSON.parse(event.data));
+});
+</code></pre>
+<h1 id="效果">效果</h1>
+<figure data-type="image" tabindex="1"><img src="https://Vik1ang.github.io/post-images/1668824535512.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Hello Gridea]]></title>
+        <id>https://Vik1ang.github.io/post/hello-gridea/</id>
+        <link href="https://Vik1ang.github.io/post/hello-gridea/">
+        </link>
+        <updated>2018-12-11T16:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
+✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
+✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
+<!-- more -->
+<p><a href="https://github.com/getgridea/gridea">Github</a><br>
+<a href="https://gridea.dev/">Gridea 主页</a><br>
+<a href="https://fehey.com/">示例网站</a></p>
+<h2 id="特性">特性👇</h2>
+<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
+<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
+<p>🏷️  你可以对文章进行标签分组</p>
+<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
+<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
+<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
+<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
+<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
+<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
+<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
+<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
+<p>未来，它一定会成为你离不开的伙伴</p>
+<p>尽情发挥你的才华吧！</p>
+<p>😘 Enjoy~</p>
+]]></content>
+    </entry>
+</feed>
